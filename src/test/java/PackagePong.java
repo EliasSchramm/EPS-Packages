@@ -7,6 +7,10 @@ public class PackagePong extends Package {
         add("love", false);
         add("money", 0);
         add("friends", new String[]{"Fru", "Fra", "Fri"});
-        add("name", "ssssss");
+        add("sawqeq", "^1");
+        add("sawqfffffffeq", "ffffffffffff");
+        add("sssssss", 1f);
+        add("test_double", 1D);
+        add("test_long", 1L);
     }
 }

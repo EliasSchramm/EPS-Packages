@@ -1,5 +1,6 @@
 package de.epsdev.packages;
 
+import com.google.gson.Gson;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
@@ -39,34 +40,33 @@ public class Package {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
     }
 
-    public Package(String base64){
+    public Package(String base64) {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
         byte[] _decoded = Base64.getMimeDecoder().decode(base64);
         String decoded = new String(_decoded);
-
-        System.out.println(decoded);
 
         JSONObject o = new JSONObject(decoded);
         this.name = o.getString("package_name");
 
         JSONObject data = o.getJSONObject("data");
-        data.keys();
 
-        JSONObject field = data.getJSONObject("str");
-        for (Iterator<String> it = field.keys(); it.hasNext();) {
-            String key = it.next();
-            this.string_values.put(key, field.getString(key));
-        }
+        this.string_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
+        this.string_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
 
-        field = data.getJSONObject("str_a");
-        for (Iterator<String> it = field.keys(); it.hasNext();) {
-            String key = it.next();
-            List<String> temp = new ArrayList<>();
-            for (Object obj : field.getJSONArray(key).toList()) {
-                temp.add(getInstance(String.class, obj));
-            }
-            this.string_a_values.put(key, temp.toArray(new String[0]));
-        }
+        this.int_values = new Gson().fromJson(data.getJSONObject("int").toString(), HashMap.class);
+        this.int_a_values = new Gson().fromJson(data.getJSONObject("int_a").toString(), HashMap.class);
+
+        this.float_values = new Gson().fromJson(data.getJSONObject("float").toString(), HashMap.class);
+        this.float_a_values = new Gson().fromJson(data.getJSONObject("float_a").toString(), HashMap.class);
+
+        this.double_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
+        this.double_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
+
+        this.long_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
+        this.long_a_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
+
+        this.boolean_values = new Gson().fromJson(data.getJSONObject("boolean").toString(), HashMap.class);
+        this.boolean_a_values = new Gson().fromJson(data.getJSONObject("boolean_a").toString(), HashMap.class);
     }
 
     public void send(Socket s){
@@ -145,9 +145,4 @@ public class Package {
         return this.name;
     }
 
-    private  <T> T getInstance(Class<T> type, Object o) {
-        T t = null;
-        t = type.cast(o);
-        return t;
-    }
 }
