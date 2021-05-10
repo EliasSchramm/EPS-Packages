@@ -1,4 +1,9 @@
 import de.epsdev.packages.Connection;
+import de.epsdev.packages.encryption.EncryptionMode;
+import de.epsdev.packages.encryption.RSA_Pair;
+
+import java.security.KeyPair;
+import java.security.PublicKey;
 
 public class client {
 

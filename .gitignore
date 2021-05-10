@@ -10,7 +10,7 @@
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
-# de.epsdev.packages.Package Files #
+# de.epsdev.packages.packages.Package Files #
 *.jar
 *.war
 *.nar

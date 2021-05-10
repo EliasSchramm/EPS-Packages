@@ -1,4 +1,4 @@
-import de.epsdev.packages.Package;
+import de.epsdev.packages.packages.Package;
 
 public class PackagePong extends Package {
     public PackagePong() {

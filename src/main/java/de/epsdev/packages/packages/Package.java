@@ -1,16 +1,23 @@
-package de.epsdev.packages;
+package de.epsdev.packages.packages;
 
 import com.google.gson.Gson;
+import de.epsdev.packages.OnPackageReceive;
+import de.epsdev.packages.encryption.RSA_Pair;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.security.KeyPair;
+import java.security.PublicKey;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Package {
+    public static RSA_Pair KEYS = null;
+    public static HashMap<String, PublicKey> CLIENT_KEYS = new HashMap<>();
+
     private final String name;
     private final int id;
 
@@ -42,6 +49,7 @@ public class Package {
 
     public Package(String base64) {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
+        base64 = decrypt(base64);
         byte[] _decoded = Base64.getMimeDecoder().decode(base64);
         String decoded = new String(_decoded);
 
@@ -74,10 +82,29 @@ public class Package {
             OutputStream outToServer = s.getOutputStream();
             DataOutputStream out = new DataOutputStream(outToServer);
 
-            out.writeUTF(Base64.getMimeEncoder().encodeToString(genJsonString().getBytes()));
+            String bs64 = Base64.getMimeEncoder().encodeToString(genJsonString().getBytes());
+            out.writeUTF(encrypt(bs64, s));
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private String encrypt(String str, Socket s){
+
+        if (CLIENT_KEYS.containsKey(s.toString())){
+            return RSA_Pair.encrypt(str, CLIENT_KEYS.get(s.toString()));
+        }
+
+        return str;
+    }
+
+    private String decrypt(String str){
+
+        if (KEYS != null){
+            return RSA_Pair.decrypt(str, KEYS.getPrivateKey());
+        }
+
+        return str;
     }
 
     public boolean add(String field_name, Object value){
@@ -143,6 +170,10 @@ public class Package {
 
     public String getName(){
         return this.name;
+    }
+
+    public String getString(String field_name){
+        return this.string_values.containsKey(field_name) ? this.string_values.get(field_name) : null;
     }
 
 }

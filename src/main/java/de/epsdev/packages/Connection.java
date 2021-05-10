@@ -1,9 +1,11 @@
 package de.epsdev.packages;
 
+import de.epsdev.packages.packages.Package;
+import de.epsdev.packages.packages.PackageRespondRSA;
+import de.epsdev.packages.packages.PackagesSendAndRequestRSA;
+
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.HashMap;
@@ -15,6 +17,10 @@ public class Connection extends Thread{
 
     public Connection(String host, int port){
         this.port = port;
+
+        this.registerPackage(new PackageRespondRSA());
+        this.registerPackage(new PackagesSendAndRequestRSA());
+
         try {
             this.socket = new Socket(host, port);
         }catch (Exception e){

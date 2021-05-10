@@ -1,7 +1,12 @@
 package de.epsdev.packages;
 
+import de.epsdev.packages.encryption.EncryptionMode;
+import de.epsdev.packages.encryption.RSA_Pair;
+import de.epsdev.packages.packages.Package;
+import de.epsdev.packages.packages.PackageRespondRSA;
+import de.epsdev.packages.packages.PackagesSendAndRequestRSA;
+
 import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -13,8 +18,20 @@ public class Server extends Thread{
     private HashMap<String,OnPackageReceive> packages = new HashMap<>();
     private final int port;
 
-    public Server(int port, int timeout){
+    private final EncryptionMode mode;
+
+    public Server(int port, int timeout, EncryptionMode mode){
         this.port = port;
+        this.mode = mode;
+
+        this.registerPackage(new PackageRespondRSA());
+        this.registerPackage(new PackagesSendAndRequestRSA());
+
+        if(mode != null){
+            Package.KEYS = new RSA_Pair(mode);
+            System.out.println(Package.KEYS.getPublicKey().getEncoded());
+        }
+
         try {
             serverSocket = new ServerSocket(port);
             serverSocket.setSoTimeout(timeout);
@@ -38,6 +55,11 @@ public class Server extends Thread{
     }
 
     private Thread processConnection(Socket s){
+
+        if(Package.KEYS != null && !Package.CLIENT_KEYS.containsKey(s.toString())){
+            new PackagesSendAndRequestRSA(mode, Package.KEYS.getPublicKey()).send(s);
+        }
+
         return new Thread(() -> {
             try {
                 System.out.println("Just connected to " + s.getRemoteSocketAddress());
@@ -49,7 +71,6 @@ public class Server extends Thread{
                 Package received = new Package(data);
 
                 this.packages.get(received.getName()).onReceive(received, s);
-
             } catch (SocketTimeoutException e) {
                 System.out.println("Socket timed out!");
             } catch (IOException e) {
