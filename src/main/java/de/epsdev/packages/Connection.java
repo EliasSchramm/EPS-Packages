@@ -1,8 +1,8 @@
 package de.epsdev.packages;
 
+import de.epsdev.packages.encryption.AES_Key;
 import de.epsdev.packages.packages.Package;
-import de.epsdev.packages.packages.PackageRespondRSA;
-import de.epsdev.packages.packages.PackagesSendAndRequestRSA;
+;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -17,10 +17,6 @@ public class Connection extends Thread{
 
     public Connection(String host, int port){
         this.port = port;
-
-        this.registerPackage(new PackageRespondRSA());
-        this.registerPackage(new PackagesSendAndRequestRSA());
-
         try {
             this.socket = new Socket(host, port);
         }catch (Exception e){
@@ -29,6 +25,8 @@ public class Connection extends Thread{
     }
 
     public void run() {
+        HandshakeSequence.clientSide(socket);
+
         while(true) {
             try {
                 System.out.println("Just connected to " + socket.getRemoteSocketAddress());
@@ -37,7 +35,7 @@ public class Connection extends Thread{
                 in = new DataInputStream(socket.getInputStream());
 
                 String data = in.readUTF();
-                Package received = new Package(data);
+                Package received = new Package(data, socket);
 
                 this.packages.get(received.getName()).onReceive(received, socket);
 

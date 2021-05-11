@@ -12,7 +12,7 @@ public enum EncryptionMode {
             case RSA2048:
                 return 2048;
             case RSA4086:
-                return 4086;
+                return 4096;
         }
         return 0;
     }

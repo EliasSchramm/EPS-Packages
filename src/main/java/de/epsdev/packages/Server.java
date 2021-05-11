@@ -3,8 +3,6 @@ package de.epsdev.packages;
 import de.epsdev.packages.encryption.EncryptionMode;
 import de.epsdev.packages.encryption.RSA_Pair;
 import de.epsdev.packages.packages.Package;
-import de.epsdev.packages.packages.PackageRespondRSA;
-import de.epsdev.packages.packages.PackagesSendAndRequestRSA;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -24,12 +22,8 @@ public class Server extends Thread{
         this.port = port;
         this.mode = mode;
 
-        this.registerPackage(new PackageRespondRSA());
-        this.registerPackage(new PackagesSendAndRequestRSA());
-
         if(mode != null){
             Package.KEYS = new RSA_Pair(mode);
-            System.out.println(Package.KEYS.getPublicKey().getEncoded());
         }
 
         try {
@@ -46,7 +40,11 @@ public class Server extends Thread{
         while(true) {
             Socket client;
             try {
+
                 client = serverSocket.accept();
+                HandshakeSequence.serverSide(client);
+
+                System.out.println("Handshake Ready");
                 processConnection(client).start();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -55,11 +53,6 @@ public class Server extends Thread{
     }
 
     private Thread processConnection(Socket s){
-
-        if(Package.KEYS != null && !Package.CLIENT_KEYS.containsKey(s.toString())){
-            new PackagesSendAndRequestRSA(mode, Package.KEYS.getPublicKey()).send(s);
-        }
-
         return new Thread(() -> {
             try {
                 System.out.println("Just connected to " + s.getRemoteSocketAddress());
@@ -68,7 +61,7 @@ public class Server extends Thread{
                 in = new DataInputStream(s.getInputStream());
 
                 String data = in.readUTF();
-                Package received = new Package(data);
+                Package received = new Package(data, s);
 
                 this.packages.get(received.getName()).onReceive(received, s);
             } catch (SocketTimeoutException e) {

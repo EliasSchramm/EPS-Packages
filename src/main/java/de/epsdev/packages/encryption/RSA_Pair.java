@@ -32,7 +32,10 @@ public class RSA_Pair {
             Cipher encryptCipher = Cipher.getInstance("RSA");
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
+            System.out.println(plainText);
+
             byte[] cipherText = encryptCipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
+
 
             return Base64.getEncoder().encodeToString(cipherText);
         }catch (Exception e){

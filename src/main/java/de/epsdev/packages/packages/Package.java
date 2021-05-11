@@ -2,6 +2,7 @@ package de.epsdev.packages.packages;
 
 import com.google.gson.Gson;
 import de.epsdev.packages.OnPackageReceive;
+import de.epsdev.packages.encryption.AES_Key;
 import de.epsdev.packages.encryption.RSA_Pair;
 import org.json.JSONObject;
 
@@ -16,7 +17,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class Package {
     public static RSA_Pair KEYS = null;
-    public static HashMap<String, PublicKey> CLIENT_KEYS = new HashMap<>();
+    public static HashMap<String, AES_Key> CLIENT_KEYS = new HashMap<>();
 
     private final String name;
     private final int id;
@@ -47,34 +48,35 @@ public class Package {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
     }
 
-    public Package(String base64) {
+    public Package(String base64, Socket s) {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
-        base64 = decrypt(base64);
-        byte[] _decoded = Base64.getMimeDecoder().decode(base64);
-        String decoded = new String(_decoded);
+        String decoded = decrypt(base64, s);
 
         JSONObject o = new JSONObject(decoded);
         this.name = o.getString("package_name");
 
         JSONObject data = o.getJSONObject("data");
 
-        this.string_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
-        this.string_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
+        List<String> o_keys = new ArrayList<>();
+        data.keys().forEachRemaining(o_keys::add);
 
-        this.int_values = new Gson().fromJson(data.getJSONObject("int").toString(), HashMap.class);
-        this.int_a_values = new Gson().fromJson(data.getJSONObject("int_a").toString(), HashMap.class);
+        if (o_keys.contains("str")) this.string_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
+        if (o_keys.contains("str_a")) this.string_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
 
-        this.float_values = new Gson().fromJson(data.getJSONObject("float").toString(), HashMap.class);
-        this.float_a_values = new Gson().fromJson(data.getJSONObject("float_a").toString(), HashMap.class);
+        if (o_keys.contains("int")) this.int_values = new Gson().fromJson(data.getJSONObject("int").toString(), HashMap.class);
+        if (o_keys.contains("int_a")) this.int_a_values = new Gson().fromJson(data.getJSONObject("int_a").toString(), HashMap.class);
 
-        this.double_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
-        this.double_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
+        if (o_keys.contains("float")) this.float_values = new Gson().fromJson(data.getJSONObject("float").toString(), HashMap.class);
+        if (o_keys.contains("float_a")) this.float_a_values = new Gson().fromJson(data.getJSONObject("float_a").toString(), HashMap.class);
 
-        this.long_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
-        this.long_a_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
+        if (o_keys.contains("double")) this.double_values = new Gson().fromJson(data.getJSONObject("double").toString(), HashMap.class);
+        if (o_keys.contains("double_a")) this.double_a_values = new Gson().fromJson(data.getJSONObject("double_a").toString(), HashMap.class);
 
-        this.boolean_values = new Gson().fromJson(data.getJSONObject("boolean").toString(), HashMap.class);
-        this.boolean_a_values = new Gson().fromJson(data.getJSONObject("boolean_a").toString(), HashMap.class);
+        if (o_keys.contains("long")) this.long_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
+        if (o_keys.contains("long_a")) this.long_a_values = new Gson().fromJson(data.getJSONObject("long_a").toString(), HashMap.class);
+
+        if (o_keys.contains("boolean")) this.boolean_values = new Gson().fromJson(data.getJSONObject("boolean").toString(), HashMap.class);
+        if (o_keys.contains("boolean_a")) this.boolean_a_values = new Gson().fromJson(data.getJSONObject("boolean_a").toString(), HashMap.class);
     }
 
     public void send(Socket s){
@@ -82,8 +84,7 @@ public class Package {
             OutputStream outToServer = s.getOutputStream();
             DataOutputStream out = new DataOutputStream(outToServer);
 
-            String bs64 = Base64.getMimeEncoder().encodeToString(genJsonString().getBytes());
-            out.writeUTF(encrypt(bs64, s));
+            out.writeUTF(encrypt(genJsonString(), s));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -92,16 +93,18 @@ public class Package {
     private String encrypt(String str, Socket s){
 
         if (CLIENT_KEYS.containsKey(s.toString())){
-            return RSA_Pair.encrypt(str, CLIENT_KEYS.get(s.toString()));
+            AES_Key k = CLIENT_KEYS.get(s.toString());
+            return k.encrypt(str);
         }
 
         return str;
     }
 
-    private String decrypt(String str){
+    private String decrypt(String str, Socket s){
 
         if (KEYS != null){
-            return RSA_Pair.decrypt(str, KEYS.getPrivateKey());
+            AES_Key k = CLIENT_KEYS.get(s.toString());
+            return k.decrypt(str);
         }
 
         return str;
@@ -145,23 +148,23 @@ public class Package {
 
         JSONObject _out = new JSONObject();
 
-        _out.put("str",new JSONObject(this.string_values));
-        _out.put("str_a",new JSONObject(this.string_a_values));
+        if(!this.string_values.isEmpty()) _out.put("str",new JSONObject(this.string_values));
+        if(!this.string_a_values.isEmpty()) _out.put("str_a",new JSONObject(this.string_a_values));
 
-        _out.put("int",new JSONObject(this.int_values));
-        _out.put("int_a",new JSONObject(this.int_a_values));
+        if(!this.int_values.isEmpty()) _out.put("int",new JSONObject(this.int_values));
+        if(!this.int_a_values.isEmpty()) _out.put("int_a",new JSONObject(this.int_a_values));
 
-        _out.put("float",new JSONObject(this.float_values));
-        _out.put("float_a",new JSONObject(this.float_a_values));
+        if(!this.float_values.isEmpty()) _out.put("float",new JSONObject(this.float_values));
+        if(!this.float_a_values.isEmpty()) _out.put("float_a",new JSONObject(this.float_a_values));
 
-        _out.put("double",new JSONObject(this.double_values));
-        _out.put("double_a",new JSONObject(this.double_a_values));
+        if(!this.double_values.isEmpty()) _out.put("double",new JSONObject(this.double_values));
+        if(!this.double_a_values.isEmpty()) _out.put("double_a",new JSONObject(this.double_a_values));
 
-        _out.put("long",new JSONObject(this.long_values));
-        _out.put("long_a",new JSONObject(this.long_a_values));
+        if(!this.long_values.isEmpty()) _out.put("long",new JSONObject(this.long_values));
+        if(!this.long_a_values.isEmpty()) _out.put("long_a",new JSONObject(this.long_a_values));
 
-        _out.put("boolean",new JSONObject(this.boolean_values));
-        _out.put("boolean_a",new JSONObject(this.boolean_a_values));
+        if(!this.boolean_values.isEmpty()) _out.put("boolean",new JSONObject(this.boolean_values));
+        if(!this.boolean_a_values.isEmpty()) _out.put("boolean_a",new JSONObject(this.boolean_a_values));
 
         out.put("data", _out);
 
