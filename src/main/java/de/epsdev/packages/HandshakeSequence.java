@@ -51,6 +51,7 @@ public class HandshakeSequence {
             out.writeUTF(RSA_Pair.encrypt(key.toString(), rsa_key));
 
             Package.CLIENT_KEYS.put(s.toString(), key);
+            Package.KEYS = new RSA_Pair();
 
         }catch (Exception e){
             e.printStackTrace();

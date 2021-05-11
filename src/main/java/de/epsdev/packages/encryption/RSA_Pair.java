@@ -14,6 +14,8 @@ public class RSA_Pair {
         this.keys = generateKeyPair(mode);
     }
 
+    public RSA_Pair(){}
+
     private KeyPair generateKeyPair(EncryptionMode mode) {
         try {
             KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
@@ -32,10 +34,7 @@ public class RSA_Pair {
             Cipher encryptCipher = Cipher.getInstance("RSA");
             encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
 
-            System.out.println(plainText);
-
             byte[] cipherText = encryptCipher.doFinal(plainText.getBytes(StandardCharsets.UTF_8));
-
 
             return Base64.getEncoder().encodeToString(cipherText);
         }catch (Exception e){
@@ -76,7 +75,6 @@ public class RSA_Pair {
             e.printStackTrace();
             return null;
         }
-
     }
 
     public static PublicKey stringToPublic(String s){

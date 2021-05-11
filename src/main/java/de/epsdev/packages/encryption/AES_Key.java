@@ -16,7 +16,7 @@ public class AES_Key {
 
         try {
             KeyGenerator generator = KeyGenerator.getInstance("AES");
-            generator.init(128); // The AES key size in number of bits
+            generator.init(128);
             k = generator.generateKey();
         }catch (Exception e){
             e.printStackTrace();

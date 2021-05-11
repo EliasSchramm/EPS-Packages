@@ -1,8 +1,6 @@
 package de.epsdev.packages;
 
-import de.epsdev.packages.encryption.AES_Key;
 import de.epsdev.packages.packages.Package;
-;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -19,14 +17,13 @@ public class Connection extends Thread{
         this.port = port;
         try {
             this.socket = new Socket(host, port);
+            HandshakeSequence.clientSide(socket);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
 
     public void run() {
-        HandshakeSequence.clientSide(socket);
-
         while(true) {
             try {
                 System.out.println("Just connected to " + socket.getRemoteSocketAddress());
