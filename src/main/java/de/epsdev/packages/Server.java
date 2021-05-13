@@ -2,6 +2,7 @@ package de.epsdev.packages;
 
 import de.epsdev.packages.encryption.EncryptionMode;
 import de.epsdev.packages.encryption.RSA_Pair;
+import de.epsdev.packages.packages.Base_Package;
 import de.epsdev.packages.packages.Package;
 
 import java.io.DataInputStream;
@@ -13,7 +14,6 @@ import java.util.HashMap;
 
 public class Server extends Thread{
     private ServerSocket serverSocket;
-    private HashMap<String,OnPackageReceive> packages = new HashMap<>();
     private final int port;
 
     private final EncryptionMode mode;
@@ -40,7 +40,6 @@ public class Server extends Thread{
         while(true) {
             Socket client;
             try {
-
                 client = serverSocket.accept();
                 HandshakeSequence.serverSide(client);
 
@@ -54,30 +53,29 @@ public class Server extends Thread{
 
     private Thread processConnection(Socket s){
         return new Thread(() -> {
-            try {
-                System.out.println("Just connected to " + s.getRemoteSocketAddress());
+            while (true){
+                try {
+                    DataInputStream in;
+                    in = new DataInputStream(s.getInputStream());
+                    String data = in.readUTF();
 
-                DataInputStream in;
-                in = new DataInputStream(s.getInputStream());
-
-                String data = in.readUTF();
-                Package received = new Package(data, s);
-
-                this.packages.get(received.getName()).onReceive(received, s);
-            } catch (SocketTimeoutException e) {
-                System.out.println("Socket timed out!");
-            } catch (IOException e) {
-                e.printStackTrace();
+                    Package received = Package.toPackage(data,s);
+                    received.onPackageReceive(s);
+                } catch (SocketTimeoutException e) {
+                    System.out.println("Socket timed out!");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
+
 
     public void send(Package p,Socket s){
         p.send(s);
     }
 
-    public void registerPackage(Package p){
-        if(!this.packages.containsKey(p.getName()))
-            this.packages.put(p.getName(), p.onPackageReceive);
+    public void registerPackage(String name, Class clazz){
+        Package.registerPackage(name, clazz);
     }
 }

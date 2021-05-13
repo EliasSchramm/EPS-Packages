@@ -6,11 +6,9 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.HashMap;
 
 public class Connection extends Thread{
     private Socket socket;
-    private HashMap<String,OnPackageReceive> packages = new HashMap<>();
     private final int port;
 
     public Connection(String host, int port){
@@ -26,17 +24,14 @@ public class Connection extends Thread{
     public void run() {
         while(true) {
             try {
-                System.out.println("Just connected to " + socket.getRemoteSocketAddress());
-
                 DataInputStream in;
                 in = new DataInputStream(socket.getInputStream());
 
                 String data = in.readUTF();
-                Package received = new Package(data, socket);
 
-                this.packages.get(received.getName()).onReceive(received, socket);
+                Package received = Package.toPackage(data,socket);
+                received.onPackageReceive(socket);
 
-                break;
             } catch (SocketTimeoutException e) {
                 System.out.println("Socket timed out!");
             } catch (IOException e) {
@@ -50,8 +45,7 @@ public class Connection extends Thread{
         p.send(this.socket);
     }
 
-    public void registerPackage(Package p){
-        if(!this.packages.containsKey(p.getName()))
-            this.packages.put(p.getName(), p.onPackageReceive);
+    public void registerPackage(String name, Class clazz){
+        Package.registerPackage(name, clazz);
     }
 }
