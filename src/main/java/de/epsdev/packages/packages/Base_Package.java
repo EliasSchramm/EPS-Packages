@@ -159,7 +159,51 @@ public class Base_Package {
     }
 
     public String getString(String field_name){
-        return this.string_values.getOrDefault(field_name, "lol");
+        return this.string_values.getOrDefault(field_name, null);
+    }
+
+    public String[] getStringArray(String field_name){
+        return this.string_a_values.getOrDefault(field_name, null);
+    }
+
+    public int getInteger(String field_name){
+        return this.int_values.getOrDefault(field_name, null);
+    }
+
+    public int[] getIntegerArray(String field_name){
+        return this.int_a_values.getOrDefault(field_name, null);
+    }
+
+    public float getFloat(String field_name){
+        return this.float_values.getOrDefault(field_name, null);
+    }
+
+    public float[] getFloatArray(String field_name){
+        return this.float_a_values.getOrDefault(field_name, null);
+    }
+
+    public double getDouble(String field_name){
+        return this.double_values.getOrDefault(field_name, null);
+    }
+
+    public double[] getDoubleArray(String field_name){
+        return this.double_a_values.getOrDefault(field_name, null);
+    }
+
+    public long getLong(String field_name){
+        return this.long_values.getOrDefault(field_name, null);
+    }
+
+    public long[] getLongArray(String field_name){
+        return this.long_a_values.getOrDefault(field_name, null);
+    }
+
+    public boolean getBoolean(String field_name){
+        return this.boolean_values.getOrDefault(field_name, null);
+    }
+
+    public boolean[] getBooleanArray(String field_name){
+        return this.boolean_a_values.getOrDefault(field_name, null);
     }
 
     private String encrypt(String str, Socket s){
