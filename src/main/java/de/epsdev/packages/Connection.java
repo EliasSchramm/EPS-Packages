@@ -21,6 +21,10 @@ public class Connection extends Thread{
         }
     }
 
+    public void init(){
+        this.run();
+    }
+
     public void run() {
         while(true) {
             try {

@@ -34,6 +34,10 @@ public class Server extends Thread{
         }
     }
 
+    public void init(){
+        this.run();
+    }
+
     public void run() {
         System.out.println("Waiting for client on port " +
                 serverSocket.getLocalPort() + "...");
