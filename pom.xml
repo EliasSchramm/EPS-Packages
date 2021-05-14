@@ -6,7 +6,7 @@
 
     <groupId>de.eps-dev</groupId>
     <artifactId>EPS-Packages</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <name>EPS-Packages</name>
     <description>A simple networking manager</description>
