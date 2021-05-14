@@ -8,6 +8,10 @@
     <artifactId>EPS-Packages</artifactId>
     <version>1.0</version>
 
+    <name>EPS-Packages</name>
+    <description>A simple networking manager</description>
+    <url>https://github.com/EliasSchramm/EPS-Packages</url>
+
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
         <maven.compiler.target>8</maven.compiler.target>
