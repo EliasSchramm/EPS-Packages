@@ -5,8 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.eps-dev</groupId>
-    <artifactId>EPS-Packages</artifactId>
-    <version>1.0.1</version>
+    <artifactId>eps-packages</artifactId>
+    <version>1.0.6</version>
 
     <name>EPS-Packages</name>
     <description>A simple networking manager</description>
@@ -37,4 +37,5 @@
             <url>https://maven.pkg.github.com/EliasSchramm/EPS-Packages</url>
         </repository>
     </distributionManagement>
+
 </project>
