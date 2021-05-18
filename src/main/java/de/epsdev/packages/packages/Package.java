@@ -2,6 +2,7 @@ package de.epsdev.packages.packages;
 
 import de.epsdev.packages.encryption.AES_Key;
 import de.epsdev.packages.encryption.RSA_Pair;
+import de.epsdev.packages.exeptions.PackageNotFoundException;
 
 import java.lang.reflect.Constructor;
 import java.net.Socket;
@@ -24,7 +25,7 @@ public abstract class Package extends Base_Package{
         super(base_package);
     }
 
-    public abstract void onPackageReceive(Socket sender);
+    public abstract void onPackageReceive(Socket sender, Object o);
 
     public static void registerPackage(String name, Class packageClass) {
         if(!PACKAGES.containsKey(name)) PACKAGES.put(name, packageClass);
@@ -32,8 +33,10 @@ public abstract class Package extends Base_Package{
 
     public static Package toPackage(String base64, Socket s){
         Base_Package p = new Base_Package(base64, s);
-        if(!PACKAGES.containsKey(p.getName())) return null;
+
         try {
+            if(!PACKAGES.containsKey(p.getName())) throw new PackageNotFoundException(p.getName());
+
             Class<Package> clazz = PACKAGES.get(p.getName());
             Constructor<?> cons = clazz.getConstructor(Base_Package.class);
             return clazz.cast(cons.newInstance(p));

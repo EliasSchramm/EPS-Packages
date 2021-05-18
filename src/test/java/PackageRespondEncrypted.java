@@ -21,7 +21,7 @@ public class PackageRespondEncrypted extends Package {
     }
 
     @Override
-    public void onPackageReceive(Socket sender) {
+    public void onPackageReceive(Socket sender, Object o) {
         String s_key = getString("key");
         AES_Key k = new AES_Key(s_key);
 

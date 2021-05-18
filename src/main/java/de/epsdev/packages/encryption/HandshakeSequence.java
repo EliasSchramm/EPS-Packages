@@ -1,7 +1,5 @@
-package de.epsdev.packages;
+package de.epsdev.packages.encryption;
 
-import de.epsdev.packages.encryption.AES_Key;
-import de.epsdev.packages.encryption.RSA_Pair;
 import de.epsdev.packages.packages.Package;
 
 import java.io.DataInputStream;

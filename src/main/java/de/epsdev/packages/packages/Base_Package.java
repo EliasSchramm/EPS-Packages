@@ -1,12 +1,14 @@
 package de.epsdev.packages.packages;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import de.epsdev.packages.encryption.AES_Key;
 import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.Type;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,22 +21,34 @@ public class Base_Package {
     private JSONObject base_data;
 
     private HashMap<String, String> string_values = new HashMap<>();
+    private final Type string_values_type = new TypeToken<HashMap<String, String>>(){}.getType();
     private HashMap<String, String[]> string_a_values = new HashMap<>();
+    private final Type string_a_values_type = new TypeToken<HashMap<String, String[]>>(){}.getType();
 
     private HashMap<String, Integer> int_values = new HashMap<>();
+    private final Type int_values_type = new TypeToken<HashMap<String, Integer>>(){}.getType();
     private HashMap<String, int[]> int_a_values = new HashMap<>();
+    private final Type int_a_values_type = new TypeToken<HashMap<String, int[]>>(){}.getType();
 
     private HashMap<String, Float> float_values = new HashMap<>();
+    private final Type float_values_type = new TypeToken<HashMap<String, Float>>(){}.getType();
     private HashMap<String, float[]> float_a_values = new HashMap<>();
+    private final Type float_a_values_type = new TypeToken<HashMap<String, float[]>>(){}.getType();
 
     private HashMap<String, Double> double_values = new HashMap<>();
+    private final Type double_values_type = new TypeToken<HashMap<String, Double>>(){}.getType();
     private HashMap<String, double[]> double_a_values = new HashMap<>();
+    private final Type double_a_values_type = new TypeToken<HashMap<String, double[]>>(){}.getType();
 
     private HashMap<String, Long> long_values = new HashMap<>();
+    private final Type long_values_type = new TypeToken<HashMap<String, Long>>(){}.getType();
     private HashMap<String, long[]> long_a_values = new HashMap<>();
+    private final Type long_a_values_type = new TypeToken<HashMap<String, long[]>>(){}.getType();
 
     private HashMap<String, Boolean> boolean_values = new HashMap<>();
+    private final Type boolean_values_type = new TypeToken<HashMap<String, Double>>(){}.getType();
     private HashMap<String, boolean[]> boolean_a_values = new HashMap<>();
+    private final Type boolean_a_values_type = new TypeToken<HashMap<String, double[]>>(){}.getType();
 
     public Base_Package(String name){
         this.name = name;
@@ -68,29 +82,28 @@ public class Base_Package {
 
     private void assignValuesByJSONObject(JSONObject o){
         this.name = o.getString("package_name");
-
         JSONObject data = o.getJSONObject("data");
 
         List<String> o_keys = new ArrayList<>();
         data.keys().forEachRemaining(o_keys::add);
 
-        if (o_keys.contains("str")) this.string_values = new Gson().fromJson(data.getJSONObject("str").toString(), HashMap.class);
-        if (o_keys.contains("str_a")) this.string_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), HashMap.class);
+        if (o_keys.contains("str")) this.string_values = new Gson().fromJson(data.getJSONObject("str").toString(), string_values_type);
+        if (o_keys.contains("str_a")) this.string_a_values = new Gson().fromJson(data.getJSONObject("str_a").toString(), string_a_values_type);
 
-        if (o_keys.contains("int")) this.int_values = new Gson().fromJson(data.getJSONObject("int").toString(), HashMap.class);
-        if (o_keys.contains("int_a")) this.int_a_values = new Gson().fromJson(data.getJSONObject("int_a").toString(), HashMap.class);
+        if (o_keys.contains("int")) this.int_values = new Gson().fromJson(data.getJSONObject("int").toString(), int_values_type);
+        if (o_keys.contains("int_a")) this.int_a_values = new Gson().fromJson(data.getJSONObject("int_a").toString(), int_a_values_type);
 
-        if (o_keys.contains("float")) this.float_values = new Gson().fromJson(data.getJSONObject("float").toString(), HashMap.class);
-        if (o_keys.contains("float_a")) this.float_a_values = new Gson().fromJson(data.getJSONObject("float_a").toString(), HashMap.class);
+        if (o_keys.contains("float")) this.float_values = new Gson().fromJson(data.getJSONObject("float").toString(), float_values_type);
+        if (o_keys.contains("float_a")) this.float_a_values = new Gson().fromJson(data.getJSONObject("float_a").toString(), float_a_values_type);
 
-        if (o_keys.contains("double")) this.double_values = new Gson().fromJson(data.getJSONObject("double").toString(), HashMap.class);
-        if (o_keys.contains("double_a")) this.double_a_values = new Gson().fromJson(data.getJSONObject("double_a").toString(), HashMap.class);
+        if (o_keys.contains("double")) this.double_values = new Gson().fromJson(data.getJSONObject("double").toString(), double_values_type);
+        if (o_keys.contains("double_a")) this.double_a_values = new Gson().fromJson(data.getJSONObject("double_a").toString(), double_a_values_type);
 
-        if (o_keys.contains("long")) this.long_values = new Gson().fromJson(data.getJSONObject("long").toString(), HashMap.class);
-        if (o_keys.contains("long_a")) this.long_a_values = new Gson().fromJson(data.getJSONObject("long_a").toString(), HashMap.class);
+        if (o_keys.contains("long")) this.long_values = new Gson().fromJson(data.getJSONObject("long").toString(), long_values_type);
+        if (o_keys.contains("long_a")) this.long_a_values = new Gson().fromJson(data.getJSONObject("long_a").toString(), long_a_values_type);
 
-        if (o_keys.contains("boolean")) this.boolean_values = new Gson().fromJson(data.getJSONObject("boolean").toString(), HashMap.class);
-        if (o_keys.contains("boolean_a")) this.boolean_a_values = new Gson().fromJson(data.getJSONObject("boolean_a").toString(), HashMap.class);
+        if (o_keys.contains("boolean")) this.boolean_values = new Gson().fromJson(data.getJSONObject("boolean").toString(), boolean_values_type);
+        if (o_keys.contains("boolean_a")) this.boolean_a_values = new Gson().fromJson(data.getJSONObject("boolean_a").toString(), boolean_a_values_type);
     }
 
     public boolean add(String field_name, Object value){
@@ -226,15 +239,13 @@ public class Base_Package {
         return str;
     }
 
-    public void send(Socket s){
-        try {
-            OutputStream outToServer = s.getOutputStream();
-            DataOutputStream out = new DataOutputStream(outToServer);
+    public void send(Socket s) throws IOException {
 
-            out.writeUTF(encrypt(genJsonString(), s));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        OutputStream outToServer = s.getOutputStream();
+        DataOutputStream out = new DataOutputStream(outToServer);
+
+        out.writeUTF(encrypt(genJsonString(), s));
+
     }
 
 

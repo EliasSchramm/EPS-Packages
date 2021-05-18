@@ -1,6 +1,7 @@
 import de.epsdev.packages.packages.Base_Package;
 import de.epsdev.packages.packages.Package;
 
+import java.io.IOException;
 import java.net.Socket;
 
 public class PackageSendMassage extends Package {
@@ -17,9 +18,13 @@ public class PackageSendMassage extends Package {
     }
 
     @Override
-    public void onPackageReceive(Socket sender) {
+    public void onPackageReceive(Socket sender, Object o) {
         PackageRespondEncrypted p_resp = new PackageRespondEncrypted();
         p_resp.setMessage(getString("msg"));
-        p_resp.send(sender);
+        try {
+            p_resp.send(sender);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
