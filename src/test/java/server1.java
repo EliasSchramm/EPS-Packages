@@ -12,6 +12,5 @@ public class server1 {
         s.start();
 
         System.out.println("server ready");
-
     }
 }

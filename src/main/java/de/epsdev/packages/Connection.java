@@ -1,10 +1,8 @@
 package de.epsdev.packages;
 
 import de.epsdev.packages.encryption.HandshakeSequence;
+import de.epsdev.packages.packages.*;
 import de.epsdev.packages.packages.Package;
-import de.epsdev.packages.packages.PackageCache;
-import de.epsdev.packages.packages.PackageKeepAlive;
-import de.epsdev.packages.packages.PackageRespondKeepAlive;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -20,6 +18,7 @@ public class Connection extends Thread{
 
         registerPackage("PackageKeepAlive", PackageKeepAlive.class);
         registerPackage("PackageRespondKeepAlive", PackageRespondKeepAlive.class);
+        registerPackage("PackageServerError", PackageServerError.class);
 
         try {
             this.socket = new Socket(host, port);

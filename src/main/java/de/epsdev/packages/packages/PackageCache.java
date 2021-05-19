@@ -1,10 +1,8 @@
 package de.epsdev.packages.packages;
 
+import java.io.IOException;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeMap;
 
 public class PackageCache {
@@ -22,6 +20,15 @@ public class PackageCache {
         int total_parts = Integer.parseInt(metadata[1]);
         int id = Integer.parseInt(metadata[2]);
         String data = metadata[3];
+
+        if (data.length() > Package.getPackageSize(socket)){
+            try {
+                new PackageServerError("Package bigger than allowed. Handshake might got corrupted.").send(socket);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 
         int msgs_in_cache;
         TreeMap<Integer, String> sub_cache;

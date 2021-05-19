@@ -3,10 +3,8 @@ package de.epsdev.packages;
 import de.epsdev.packages.encryption.EncryptionMode;
 import de.epsdev.packages.encryption.HandshakeSequence;
 import de.epsdev.packages.encryption.RSA_Pair;
+import de.epsdev.packages.packages.*;
 import de.epsdev.packages.packages.Package;
-import de.epsdev.packages.packages.PackageCache;
-import de.epsdev.packages.packages.PackageKeepAlive;
-import de.epsdev.packages.packages.PackageRespondKeepAlive;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -35,6 +33,7 @@ public class Server extends Thread{
 
         registerPackage("PackageKeepAlive", PackageKeepAlive.class);
         registerPackage("PackageRespondKeepAlive", PackageRespondKeepAlive.class);
+        registerPackage("PackageServerError", PackageServerError.class);
 
         if(mode != null){
             Package.KEYS = new RSA_Pair(mode);

@@ -54,7 +54,6 @@ public class HandshakeSequence {
             Package.KEYS = new RSA_Pair();
 
             return Integer.parseInt(data[1]);
-
         }catch (Exception e){
             e.printStackTrace();
         }
