@@ -9,14 +9,14 @@ import java.net.Socket;
 import java.security.PublicKey;
 
 public class HandshakeSequence {
-    public static void serverSide(Socket s){
+    public static void serverSide(Socket s, int package_size){
         try {
             OutputStream outToServer = s.getOutputStream();
             DataOutputStream out = new DataOutputStream(outToServer);
 
-            if(Package.KEYS != null) out.writeUTF(RSA_Pair.publicToString(Package.KEYS.getPublicKey()));
+            if(Package.KEYS != null) out.writeUTF(RSA_Pair.publicToString(Package.KEYS.getPublicKey()) + "|" + package_size);
             else{
-                out.writeUTF("null");
+                out.writeUTF("null|" + package_size);
                 return;
             }
 
@@ -32,15 +32,17 @@ public class HandshakeSequence {
         }
     }
 
-    public static void clientSide(Socket s){
+    public static int clientSide(Socket s){
         try {
             DataInputStream in;
             in = new DataInputStream(s.getInputStream());
 
-            String data = in.readUTF();
-            if(data.equalsIgnoreCase("null")) return;
+            String raw = in.readUTF();
+            String[] data = raw.split("\\|");
 
-            PublicKey rsa_key = RSA_Pair.stringToPublic(data);
+            if(data[0].equalsIgnoreCase("null")) return Integer.parseInt(data[1]);
+
+            PublicKey rsa_key = RSA_Pair.stringToPublic(data[0]);
             AES_Key key = new AES_Key();
 
             OutputStream outToServer = s.getOutputStream();
@@ -51,10 +53,12 @@ public class HandshakeSequence {
             Package.CLIENT_KEYS.put(s.toString(), key);
             Package.KEYS = new RSA_Pair();
 
+            return Integer.parseInt(data[1]);
+
         }catch (Exception e){
             e.printStackTrace();
         }
 
-
+        return 0;
     }
 }

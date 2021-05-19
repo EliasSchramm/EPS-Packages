@@ -2,6 +2,7 @@ package de.epsdev.packages;
 
 import de.epsdev.packages.encryption.HandshakeSequence;
 import de.epsdev.packages.packages.Package;
+import de.epsdev.packages.packages.PackageCache;
 import de.epsdev.packages.packages.PackageKeepAlive;
 import de.epsdev.packages.packages.PackageRespondKeepAlive;
 
@@ -12,6 +13,7 @@ import java.net.Socket;
 public class Connection extends Thread{
     private Socket socket;
     private final int port;
+    private PackageCache packageCache = new PackageCache();
 
     public Connection(String host, int port){
         this.port = port;
@@ -21,7 +23,8 @@ public class Connection extends Thread{
 
         try {
             this.socket = new Socket(host, port);
-            HandshakeSequence.clientSide(socket);
+            int package_size = HandshakeSequence.clientSide(socket);
+            Package.setPackageSize(socket, package_size);
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -35,8 +38,8 @@ public class Connection extends Thread{
 
                 String data = in.readUTF();
 
-                Package received = Package.toPackage(data,socket);
-                received.onPackageReceive(socket, this);
+                Package received = packageCache.process(data, socket);
+                if(received != null) received.onPackageReceive(socket, this);
             } catch (IOException ignored) {}
         }
     }

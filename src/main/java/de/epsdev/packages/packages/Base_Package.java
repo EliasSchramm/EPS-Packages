@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Type;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,11 +53,11 @@ public class Base_Package {
 
     public Base_Package(String name){
         this.name = name;
-        this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
+        this.id = ThreadLocalRandom.current().nextInt(100000000, 2000000000);
     }
 
     public Base_Package(String base64, Socket s) {
-        this.id = ThreadLocalRandom.current().nextInt(100000000, 1000000000);
+        this.id = ThreadLocalRandom.current().nextInt(100000000, 2000000000);
         String decoded = decrypt(base64, s);
 
         JSONObject o = new JSONObject(decoded);
@@ -243,11 +244,28 @@ public class Base_Package {
 
         OutputStream outToServer = s.getOutputStream();
         DataOutputStream out = new DataOutputStream(outToServer);
+        String toBeSend = encrypt(genJsonString(), s);
 
-        out.writeUTF(encrypt(genJsonString(), s));
+        if(Package.getPackageSize(s) != 0){
+            ArrayList<String> parts = new ArrayList<>();
 
+            String temp = "";
+            for (String _char : toBeSend.split("")) {
+                if(temp.getBytes(StandardCharsets.UTF_8).length >= Package.getPackageSize(s)){
+                    parts.add(temp);
+                    temp = "";
+                }
+                temp += _char;
+            }
+            parts.add(temp);
+
+            for (int i = 0; i < parts.size(); i++) {
+                parts.set(i, (i + 1) + "|" + parts.size() + "|" + this.id + "|" + parts.get(i));
+            }
+
+            for (String part : parts) out.writeUTF(part);
+        }else {
+            out.writeUTF("1|1|" + this.id + "|" + toBeSend);
+        }
     }
-
-
-
 }

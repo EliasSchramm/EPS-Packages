@@ -12,6 +12,7 @@ public abstract class Package extends Base_Package{
     public static RSA_Pair KEYS = null;
     public static HashMap<String, AES_Key> CLIENT_KEYS = new HashMap<>();
     public static HashMap<String, Class> PACKAGES = new HashMap<>();
+    private static HashMap<String, Integer> PACKAGE_SIZES = new HashMap<>();
 
     public Package(String base64, Socket s) {
         super(base64, s);
@@ -45,6 +46,14 @@ public abstract class Package extends Base_Package{
         }
         return null;
 
+    }
+
+    public static int getPackageSize(Socket s){
+        return PACKAGE_SIZES.getOrDefault(s.toString(), 0);
+    }
+
+    public static void setPackageSize(Socket s, int size){
+        PACKAGE_SIZES.put(s.toString(), size);
     }
 
 }

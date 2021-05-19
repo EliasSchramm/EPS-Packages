@@ -4,7 +4,7 @@ import de.epsdev.packages.Server;
 public class server1 {
 
     public static void main(String [] args) {
-        Server s = new Server(1010, true);
+        Server s = new Server(1010, 512,true);
 
         s.registerPackage("PackageSendMassage",PackageSendMassage.class);
         s.registerPackage("PackageRespondEncrypted",PackageRespondEncrypted.class);

@@ -4,6 +4,7 @@ import de.epsdev.packages.encryption.EncryptionMode;
 import de.epsdev.packages.encryption.HandshakeSequence;
 import de.epsdev.packages.encryption.RSA_Pair;
 import de.epsdev.packages.packages.Package;
+import de.epsdev.packages.packages.PackageCache;
 import de.epsdev.packages.packages.PackageKeepAlive;
 import de.epsdev.packages.packages.PackageRespondKeepAlive;
 
@@ -19,16 +20,18 @@ import java.util.concurrent.TimeUnit;
 public class Server extends Thread{
     private ServerSocket serverSocket;
     private final int port;
+    private final int packageSize;
 
     private final EncryptionMode mode;
     private List<Socket> connections;
     private HashMap<String, Long> ping = new HashMap<>();
+    private PackageCache packageCache = new PackageCache();
 
-    public int test = 0;
 
-    public Server(int port, boolean do_encrypt){
+    public Server(int port, int packageSize, boolean do_encrypt){
         this.port = port;
         this.mode = do_encrypt ? EncryptionMode.RSA4086 : null;
+        this.packageSize = packageSize;
 
         registerPackage("PackageKeepAlive", PackageKeepAlive.class);
         registerPackage("PackageRespondKeepAlive", PackageRespondKeepAlive.class);
@@ -53,7 +56,7 @@ public class Server extends Thread{
             Socket client;
             try {
                 client = serverSocket.accept();
-                HandshakeSequence.serverSide(client);
+                HandshakeSequence.serverSide(client, this.packageSize);
 
                 processConnection(client).start();
             } catch (IOException ignored) {}
@@ -62,6 +65,7 @@ public class Server extends Thread{
 
     private Thread processConnection(Socket s){
         this.connections.add(s);
+        Package.setPackageSize(s, this.packageSize);
         return new Thread(() -> {
             while (true){
                 try {
@@ -69,8 +73,9 @@ public class Server extends Thread{
                     in = new DataInputStream(s.getInputStream());
                     String data = in.readUTF();
 
-                    Package received = Package.toPackage(data,s);
-                    received.onPackageReceive(s, this);
+                    Package received = packageCache.process(data, s);
+                    if(received != null) received.onPackageReceive(s, this);
+
                 } catch (IOException ignored) {}
             }
         });
@@ -89,8 +94,6 @@ public class Server extends Thread{
                 }
 
                 toBeRemoved.forEach(s -> {this.connections.remove(s);});
-
-                System.out.println(test);
 
                 try {
                     TimeUnit.SECONDS.sleep(1);
