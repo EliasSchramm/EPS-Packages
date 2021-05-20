@@ -26,7 +26,6 @@ public class HandshakeSequence {
             String data = in.readUTF();
             data = RSA_Pair.decrypt(data, Package.KEYS.getPrivateKey());
             Package.CLIENT_KEYS.put(s.toString(), new AES_Key(data));
-
         }catch (Exception e){
             e.printStackTrace();
         }

@@ -60,6 +60,8 @@ public class Base_Package {
         this.id = ThreadLocalRandom.current().nextInt(100000000, 2000000000);
         String decoded = decrypt(base64, s);
 
+        if(decoded.equalsIgnoreCase("")) new PackageServerError("Package was empty or wasn't properly encoded.");
+
         JSONObject o = new JSONObject(decoded);
         this.base_data = o;
 

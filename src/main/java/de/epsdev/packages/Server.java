@@ -22,9 +22,9 @@ public class Server extends Thread{
 
     private final EncryptionMode mode;
     private List<Socket> connections;
+    private List<Socket> toBeDisconnected  = new ArrayList<>();
     private HashMap<String, Long> ping = new HashMap<>();
     private PackageCache packageCache = new PackageCache();
-
 
     public Server(int port, int packageSize, boolean do_encrypt){
         this.port = port;
@@ -34,6 +34,7 @@ public class Server extends Thread{
         registerPackage("PackageKeepAlive", PackageKeepAlive.class);
         registerPackage("PackageRespondKeepAlive", PackageRespondKeepAlive.class);
         registerPackage("PackageServerError", PackageServerError.class);
+        registerPackage("PackageRequestDisconnect", PackageRequestDisconnect.class);
 
         if(mode != null){
             Package.KEYS = new RSA_Pair(mode);
@@ -92,13 +93,18 @@ public class Server extends Thread{
                     }
                 }
 
-                toBeRemoved.forEach(s -> {this.connections.remove(s);});
+                toBeRemoved.forEach(s -> this.connections.remove(s));
 
                 try {
                     TimeUnit.SECONDS.sleep(1);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
+
+                for(Socket socket : new ArrayList<>(this.connections)){
+                    connections.remove(socket);
+                }
+                this.toBeDisconnected = new ArrayList<>();
             }
         });
     }
@@ -122,6 +128,14 @@ public class Server extends Thread{
         }
 
         ping.put(s.toString(), p);
+    }
+
+    public List<Socket> getConnections(){
+        return this.connections;
+    }
+
+    public void disconnectClient(Socket s){
+        this.toBeDisconnected.add(s);
     }
 
     public void registerPackage(String name, Class clazz){
