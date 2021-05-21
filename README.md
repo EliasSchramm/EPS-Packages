@@ -178,6 +178,22 @@ Now start the server. Then run the client. If you did anything right you should 
 I AM A MESSAGE.
 ````
 
+Now something different: Error handling. Let's say that you have written a chat server that where you need to login.
+A user has used the wrong password. How would you handle this problem? One way is using the ``PackageServerError``
+package. It sends a defined error message to the client where it throws an exception.
+
+````java
+new PackageServerError("Wrong login credentials!").send(socket);
+````
+
+The client then prints:
+
+````java
+de.epsdev.packages.exeptions.PackageServerErrorException: Wrong login credentials!
+	at de.epsdev.packages.packages.PackageServerError.onPackageReceive(PackageServerError.java:25)
+	at de.epsdev.packages.Connection.run(Connection.java:42)
+````
+
 ## Detailed documentation
 
 Following soon.
