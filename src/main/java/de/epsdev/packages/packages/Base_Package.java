@@ -47,9 +47,9 @@ public class Base_Package {
     private final Type long_a_values_type = new TypeToken<HashMap<String, long[]>>(){}.getType();
 
     private HashMap<String, Boolean> boolean_values = new HashMap<>();
-    private final Type boolean_values_type = new TypeToken<HashMap<String, Double>>(){}.getType();
+    private final Type boolean_values_type = new TypeToken<HashMap<String, Boolean>>(){}.getType();
     private HashMap<String, boolean[]> boolean_a_values = new HashMap<>();
-    private final Type boolean_a_values_type = new TypeToken<HashMap<String, double[]>>(){}.getType();
+    private final Type boolean_a_values_type = new TypeToken<HashMap<String, boolean[]>>(){}.getType();
 
     public Base_Package(String name){
         this.name = name;
