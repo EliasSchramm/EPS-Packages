@@ -28,28 +28,28 @@ public class Base_Package {
 
     private HashMap<String, Integer> int_values = new HashMap<>();
     private final Type int_values_type = new TypeToken<HashMap<String, Integer>>(){}.getType();
-    private HashMap<String, int[]> int_a_values = new HashMap<>();
-    private final Type int_a_values_type = new TypeToken<HashMap<String, int[]>>(){}.getType();
+    private HashMap<String, Integer[]> int_a_values = new HashMap<>();
+    private final Type int_a_values_type = new TypeToken<HashMap<String, Integer[]>>(){}.getType();
 
     private HashMap<String, Float> float_values = new HashMap<>();
     private final Type float_values_type = new TypeToken<HashMap<String, Float>>(){}.getType();
-    private HashMap<String, float[]> float_a_values = new HashMap<>();
-    private final Type float_a_values_type = new TypeToken<HashMap<String, float[]>>(){}.getType();
+    private HashMap<String, Float[]> float_a_values = new HashMap<>();
+    private final Type float_a_values_type = new TypeToken<HashMap<String, Float[]>>(){}.getType();
 
     private HashMap<String, Double> double_values = new HashMap<>();
     private final Type double_values_type = new TypeToken<HashMap<String, Double>>(){}.getType();
-    private HashMap<String, double[]> double_a_values = new HashMap<>();
-    private final Type double_a_values_type = new TypeToken<HashMap<String, double[]>>(){}.getType();
+    private HashMap<String, Double[]> double_a_values = new HashMap<>();
+    private final Type double_a_values_type = new TypeToken<HashMap<String, Double[]>>(){}.getType();
 
     private HashMap<String, Long> long_values = new HashMap<>();
     private final Type long_values_type = new TypeToken<HashMap<String, Long>>(){}.getType();
-    private HashMap<String, long[]> long_a_values = new HashMap<>();
-    private final Type long_a_values_type = new TypeToken<HashMap<String, long[]>>(){}.getType();
+    private HashMap<String, Long[]> long_a_values = new HashMap<>();
+    private final Type long_a_values_type = new TypeToken<HashMap<String, Long[]>>(){}.getType();
 
     private HashMap<String, Boolean> boolean_values = new HashMap<>();
     private final Type boolean_values_type = new TypeToken<HashMap<String, Boolean>>(){}.getType();
-    private HashMap<String, boolean[]> boolean_a_values = new HashMap<>();
-    private final Type boolean_a_values_type = new TypeToken<HashMap<String, boolean[]>>(){}.getType();
+    private HashMap<String, Boolean[]> boolean_a_values = new HashMap<>();
+    private final Type boolean_a_values_type = new TypeToken<HashMap<String, Boolean[]>>(){}.getType();
 
     public Base_Package(String name){
         this.name = name;
@@ -112,30 +112,31 @@ public class Base_Package {
     public boolean add(String field_name, Object value){
         if(field_name.length() == 0) return false;
 
+
         if(value instanceof String){
             string_values.put(field_name, (String) value);
         }else if(value instanceof String[]){
             string_a_values.put(field_name, (String[]) value);
         }else if(value instanceof Integer){
             int_values.put(field_name, (int) value);
-        }else if(value instanceof int[]){
-            int_a_values.put(field_name, (int[]) value);
+        }else if(value instanceof Integer[]){
+            int_a_values.put(field_name, (Integer[]) value);
         }else if(value instanceof Float){
             float_values.put(field_name, (float) value);
-        }else if(value instanceof float[]){
-            float_a_values.put(field_name, (float[]) value);
+        }else if(value instanceof Float[]){
+            float_a_values.put(field_name, (Float[]) value);
         }else if(value instanceof Double){
             double_values.put(field_name, (double) value);
-        }else if(value instanceof double[]){
-            double_a_values.put(field_name, (double[]) value);
+        }else if(value instanceof Double[]){
+            double_a_values.put(field_name, (Double[]) value);
         }else if(value instanceof Long){
             long_values.put(field_name, (long) value);
-        }else if(value instanceof long[]){
-            long_a_values.put(field_name, (long[]) value);
+        }else if(value instanceof Long[]){
+            long_a_values.put(field_name, (Long[]) value);
         }else if(value instanceof Boolean){
             boolean_values.put(field_name, (boolean) value);
-        }else if(value instanceof boolean[]){
-            boolean_a_values.put(field_name, (boolean[]) value);
+        }else if(value instanceof Boolean[]){
+            boolean_a_values.put(field_name, (Boolean[]) value);
         }else return false;
 
         return true;
@@ -186,7 +187,7 @@ public class Base_Package {
         return this.int_values.getOrDefault(field_name, null);
     }
 
-    public int[] getIntegerArray(String field_name){
+    public Integer[] getIntegerArray(String field_name){
         return this.int_a_values.getOrDefault(field_name, null);
     }
 
@@ -194,7 +195,7 @@ public class Base_Package {
         return this.float_values.getOrDefault(field_name, null);
     }
 
-    public float[] getFloatArray(String field_name){
+    public Float[] getFloatArray(String field_name){
         return this.float_a_values.getOrDefault(field_name, null);
     }
 
@@ -202,7 +203,7 @@ public class Base_Package {
         return this.double_values.getOrDefault(field_name, null);
     }
 
-    public double[] getDoubleArray(String field_name){
+    public Double[] getDoubleArray(String field_name){
         return this.double_a_values.getOrDefault(field_name, null);
     }
 
@@ -210,7 +211,7 @@ public class Base_Package {
         return this.long_values.getOrDefault(field_name, null);
     }
 
-    public long[] getLongArray(String field_name){
+    public Long[] getLongArray(String field_name){
         return this.long_a_values.getOrDefault(field_name, null);
     }
 
@@ -218,7 +219,7 @@ public class Base_Package {
         return this.boolean_values.getOrDefault(field_name, null);
     }
 
-    public boolean[] getBooleanArray(String field_name){
+    public Boolean[] getBooleanArray(String field_name){
         return this.boolean_a_values.getOrDefault(field_name, null);
     }
 
