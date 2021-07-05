@@ -1,31 +1,18 @@
 import de.epsdev.packages.Connection;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import de.epsdev.packages.packages.Package;
 
 public class client {
 
     public static void main(String [] args)  {
-        Connection r = new Connection("localhost",1010);
 
-        r.registerPackage("PackageSendMassage",PackageSendMassage.class);
-        r.registerPackage("PackageRespondEncrypted",PackageRespondEncrypted.class);
+        Package.registerPackage("PackageRequestEcho",PackageRequestEcho.class);
+        Package.registerPackage("PackageRespondEcho",PackageRespondEcho.class);
 
-        r.start();
+        Connection connection = new Connection("localhost",10101);
 
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        connection.start();
 
-        while (true){
-            System.out.print("Enter a msg to encrypt: ");
-            try {
-                String s = br.readLine();
-                PackageSendMassage p = new PackageSendMassage();
-                p.setMSG(s);
-                r.send(p);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        connection.send(new PackageRequestEcho());
+
     }
 }
