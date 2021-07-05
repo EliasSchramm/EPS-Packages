@@ -43,6 +43,18 @@ Let's start with a simple echo server that changes the entire string to uppercas
 First we need two packages: One package that the client server sends to the server containing the message it wants to
 have echoed and one package that the server sends back to the client. 
 
+### Instalation
+
+To use this libary add this to the dependency sections inside of your pom.xml:
+
+```xml
+<dependency>
+    <groupId>de.eps-dev</groupId>
+    <artifactId>eps-packages</artifactId>
+    <version>1.3.2</version>
+</dependency>
+```
+
 ``PackageRequestEcho.java``
 ```java
 
