@@ -31,7 +31,10 @@ public class Connection extends Thread {
     }
 
     public void run() {
-        while (true) {
+
+        boolean isActive = true;
+
+        while (isActive) {
             try {
                 DataInputStream in;
                 in = new DataInputStream(socket.getInputStream());
@@ -41,6 +44,8 @@ public class Connection extends Thread {
                 Package received = packageCache.process(data, socket);
                 if (received != null) received.onPackageReceive(socket, this);
             } catch (IOException ignored) {
+                isActive = false;
+                close();
             }
         }
     }

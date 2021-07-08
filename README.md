@@ -51,7 +51,7 @@ To use this libary add this to the dependency sections inside of your pom.xml:
 <dependency>
     <groupId>de.eps-dev</groupId>
     <artifactId>eps-packages</artifactId>
-    <version>1.3.2</version>
+    <version>1.3.4</version>
 </dependency>
 ```
 

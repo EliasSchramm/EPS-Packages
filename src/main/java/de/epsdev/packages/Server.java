@@ -67,7 +67,10 @@ public class Server extends Thread{
         this.connections.add(s);
         Package.setPackageSize(s, this.packageSize);
         return new Thread(() -> {
-            while (true){
+
+            boolean isActive = true;
+
+            while (isActive){
                 try {
                     DataInputStream in;
                     in = new DataInputStream(s.getInputStream());
@@ -76,7 +79,9 @@ public class Server extends Thread{
                     Package received = packageCache.process(data, s);
                     if(received != null) received.onPackageReceive(s, this);
 
-                } catch (IOException ignored) {}
+                } catch (IOException ignored) {
+                    isActive = false;
+                }
             }
         });
     }
