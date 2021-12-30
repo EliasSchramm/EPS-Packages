@@ -1,6 +1,6 @@
 # EPS-Packages
 
-A simple way to get a ~~secure~~(not very secure) server client-server connection running.
+A simple way to get a ~~secure~~(not very secure) client-server connection running.
 
 * 1. What is this?
     * 1. Goal
